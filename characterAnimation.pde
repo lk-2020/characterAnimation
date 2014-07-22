@@ -24,6 +24,7 @@ int it=0, iter=0;
 float x0, y0, x1, y1, a_x0, a_y0, a_x1, a_y1, yell_x, yell_y, y_x, y_y;
 double yellow_x[];
 double yellow_y[];
+double jYellow_x[];
 int outWidth = 2560;
 int outHeight = 1600;
 
@@ -54,7 +55,8 @@ int yellowFaceY = 720/2;
 int whiteSkeletonX = 100+whiteSkeletonXincr;
 int whiteSkeletonY = 720/2;
 
-
+int yellowJointX;
+int jointYellow_x;
 public class xandy
 {
   public double x;
@@ -79,6 +81,7 @@ void setup() {
   yTouch = new float [10]; // Don't use more than ten fingers!
   yellow_x = new double[100000];
   yellow_y = new double[100000];
+  jYellow_x = new double[100000];
 }
 
 //-----------------------------------------------------------------------------------------
@@ -106,8 +109,8 @@ void draw() {
     {
         strokeWeight(25);
         stroke(255, 255, 0);
-        line(yellowFaceX-whiteSkeletonXincr+yellowFaceSize, whiteRightHandJointY-15, yell_x, yell_y);// yellow right hand
-        line(yellowFaceX-whiteSkeletonXincr, whiteLeftHandJointY-15, yell_x, yell_y);// yellow left hand
+        line(yellowJointX, whiteRightHandJointY-15, yell_x, yell_y);// yellow right hand
+        line(yellowJointX, whiteLeftHandJointY-15, yell_x, yell_y);// yellow left hand
     }
 
     noStroke();
@@ -155,17 +158,25 @@ void draw() {
 
       if (noZero == true)
       {
+        
+        
         if (yellow_x[iter] != 0.0)
+        {
           y_x=(int)yellow_x[iter];
+          jointYellow_x = (int)jYellow_x[iter];
+        }
 
         if (yellow_y[iter] != 0.0)
+        {
           y_y=(int)yellow_y[iter];
+          jointYellow_x = (int)jYellow_x[iter];
+        }
 
         drawYellowChar();
 
         strokeWeight(25);
         stroke(255, 255, 0);
-        line(whiteRightHandJointX+yellowFaceX-whiteSkeletonXincr, whiteRightHandJointY-15, y_x, y_y);// yellow hand
+        line(jointYellow_x, whiteRightHandJointY-15, y_x, y_y);// yellow hand
       }
       if (iter == it)
       {
@@ -274,12 +285,12 @@ void ifTouchEventIs2()
       rect(whiteSkeletonX, whiteSkeletonY, 167, 167, 15);//white left skeleton highlighted in red to show the correct placement
       touchEvent = true;
       line(whiteRightHandJointX,whiteRightHandJointY, xTouch[0], yTouch[0]); //  the ink cretaes 2 points at a predefined distance on the tangible and hence this distance will always remain const.
-      x0 = (xTouch[0]-whiteRightHandJointX)+(yellowFaceX+whiteSkeletonXincr);
-      y0 = yTouch[0]-15;
-      yellow_x[it] = x0;
-      yellow_y[it] = y0;
-      yell_x=x0;
-      yell_y=y0;
+      yell_x = (xTouch[0]-whiteRightHandJointX)+(yellowFaceX+whiteSkeletonXincr);
+      yell_y = yTouch[0]-15;
+      yellow_x[it] = yell_x;
+      yellow_y[it] = yell_y;
+      yellowJointX = yellowFaceX-whiteSkeletonXincr+yellowFaceSize;
+      jYellow_x[it] = yellowJointX;
       if (record == true)
       {
         it++;
@@ -292,13 +303,13 @@ void ifTouchEventIs2()
       rect(whiteSkeletonX, whiteSkeletonY, 167, 167, 15);//white left skeleton highlighted in red to show the correct placement
       line(whiteRightHandJointX, whiteRightHandJointY, xTouch[1], yTouch[1]); //  the ink cretaes 2 points at a predefined distance on the tangible and hence this distance will always remain const.
       touchEvent = true;
-      x1 = (xTouch[1]-whiteRightHandJointX)+(yellowFaceX+whiteSkeletonXincr);
+      yell_x = (xTouch[1]-whiteRightHandJointX)+(yellowFaceX+whiteSkeletonXincr);
       //x1 = xTouch[1]+yellowFaceX-whiteSkeletonXincr;
-      y1 = yTouch[1]-15;
-      yellow_x[it] = x1;
-      yellow_y[it] = y1;
-      yell_x=x1;
-      yell_y=y1;
+      yell_y = yTouch[1]-15;
+      yellow_x[it] = yell_x;
+      yellow_y[it] = yell_y;
+      yellowJointX = yellowFaceX-whiteSkeletonXincr+yellowFaceSize;
+      jYellow_x[it] = yellowJointX;
       if (record == true)
       {
         it++;
@@ -312,12 +323,12 @@ void ifTouchEventIs2()
       rect(whiteSkeletonX, whiteSkeletonY, 167, 167, 15);//white left skeleton highlighted in red to show the correct placement
       touchEvent = true;
       line(whiteLeftHandJointX,whiteLeftHandJointY, xTouch[0], yTouch[0]); //  the ink cretaes 2 points at a predefined distance on the tangible and hence this distance will always remain const.
-      x0 = (yellowFaceX-whiteSkeletonXincr) - (whiteLeftHandJointX - xTouch[0]);
-      y0 = yTouch[0]-15;
-      yellow_x[it] = x0;
-      yellow_y[it] = y0;
-      yell_x=x0;
-      yell_y=y0;
+      yell_x = (yellowFaceX-whiteSkeletonXincr) - (whiteLeftHandJointX - xTouch[0]);
+      yell_y = yTouch[0]-15;
+      yellow_x[it] = yell_x;
+      yellow_y[it] = yell_y;
+      yellowJointX = yellowFaceX-whiteSkeletonXincr;
+      jYellow_x[it] = yellowJointX;
       if (record == true)
       {
         it++;
@@ -330,12 +341,12 @@ void ifTouchEventIs2()
       rect(whiteSkeletonX, whiteSkeletonY, 167, 167, 15);//white left skeleton highlighted in red to show the correct placement
       line(whiteLeftHandJointX, whiteLeftHandJointY, xTouch[1], yTouch[1]); //  the ink cretaes 2 points at a predefined distance on the tangible and hence this distance will always remain const.
       touchEvent = true;
-      x1 = (yellowFaceX-whiteSkeletonXincr) - (whiteLeftHandJointX - xTouch[1]);
-      y1 = yTouch[1]-15;
-      yellow_x[it] = x1;
-      yellow_y[it] = y1;
-      yell_x=x1;
-      yell_y=y1;
+      yell_x = (yellowFaceX-whiteSkeletonXincr) - (whiteLeftHandJointX - xTouch[1]);
+      yell_y = yTouch[1]-15;
+      yellow_x[it] = yell_x;
+      yellow_y[it] = yell_y;
+      yellowJointX = yellowFaceX-whiteSkeletonXincr;
+      jYellow_x[it] = yellowJointX;
       if (record == true)
       {
         it++;
