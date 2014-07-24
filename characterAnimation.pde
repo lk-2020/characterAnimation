@@ -29,6 +29,7 @@ int outWidth = 2560;
 int outHeight = 1600;
 
 float rightHandJoint0, rightHandJoint1, leftHandJoint0, leftHandJoint1;
+float sqrtL[], isLengthEqualL[], sqrtR[], isLengthEqualR[];
 boolean first = true;
 boolean touchEvent = false;
 boolean noZero = false;
@@ -57,6 +58,14 @@ int whiteSkeletonY = 720/2;
 
 int yellowJointX;
 int jointYellow_x;
+
+int handLength = 250;
+
+int jLx; // joint Left hand
+int eLx; // end left hand
+int jRx; // joint right hand
+int eRx; // end right hand
+
 public class xandy
 {
   public double x;
@@ -68,6 +77,7 @@ public class xandy
 void setup() {
   //size(displayWidth, displayHeight);
   size(1280, 720);
+  //size(2560,1600);
   orientation(LANDSCAPE);
   background(0);
   fill(0, 0, 244);
@@ -82,6 +92,11 @@ void setup() {
   yellow_x = new double[100000];
   yellow_y = new double[100000];
   jYellow_x = new double[100000];
+
+  sqrtL = new float[4]; 
+  isLengthEqualL = new float[4];
+  sqrtR = new float[4];
+  isLengthEqualR = new float[4];
 }
 
 //-----------------------------------------------------------------------------------------
@@ -102,15 +117,20 @@ void draw() {
     drawWhiteChar();
     drawWhiteSkeleton();
     drawBlueCirclesOnTouch();
-    ifTouchEventIs2();
+    if (TouchEvents == 2)
+      ifTouchEventIs2();
+    if (TouchEvents == 4)
+    {
+      ifTouchEventIs4();
+    }
 
 
     if (((xTouch[0]!=0)&&(yTouch[0]!=0))&&(touchEvent==true)) 
     {
-        strokeWeight(25);
-        stroke(255, 255, 0);
-        line(yellowJointX, whiteRightHandJointY-15, yell_x, yell_y);// yellow right hand
-        line(yellowJointX, whiteLeftHandJointY-15, yell_x, yell_y);// yellow left hand
+      strokeWeight(25);
+      stroke(255, 255, 0);
+      line(yellowJointX, whiteRightHandJointY-15, yell_x, yell_y);// yellow right hand
+      line(yellowJointX, whiteLeftHandJointY-15, yell_x, yell_y);// yellow left hand
     }
 
     noStroke();
@@ -158,8 +178,8 @@ void draw() {
 
       if (noZero == true)
       {
-        
-        
+
+
         if (yellow_x[iter] != 0.0)
         {
           y_x=(int)yellow_x[iter];
@@ -267,12 +287,12 @@ void drawBlueCirclesOnTouch()
 
 void ifTouchEventIs2()
 {
-  if (TouchEvents == 2)
+
   {
 
     rightHandJoint0 = sqrt(pow(xTouch[0]-(whiteRightHandJointX), 2) + pow(yTouch[0]-(whiteRightHandJointY), 2));
     rightHandJoint1 = sqrt(pow(xTouch[1]-(whiteRightHandJointX), 2) + pow(yTouch[1]-(whiteRightHandJointY), 2));
-    
+
     leftHandJoint0 = sqrt(pow(xTouch[0]-(whiteLeftHandJointX), 2) + pow(yTouch[0]-(whiteLeftHandJointY), 2));
     leftHandJoint1 = sqrt(pow(xTouch[1]-(whiteLeftHandJointX), 2) + pow(yTouch[1]-(whiteLeftHandJointY), 2));
 
@@ -284,7 +304,7 @@ void ifTouchEventIs2()
       noFill();
       rect(whiteSkeletonX, whiteSkeletonY, 167, 167, 15);//white left skeleton highlighted in red to show the correct placement
       touchEvent = true;
-      line(whiteRightHandJointX,whiteRightHandJointY, xTouch[0], yTouch[0]); //  the ink cretaes 2 points at a predefined distance on the tangible and hence this distance will always remain const.
+      line(whiteRightHandJointX, whiteRightHandJointY, xTouch[0], yTouch[0]); //  the ink cretaes 2 points at a predefined distance on the tangible and hence this distance will always remain const.
       yell_x = (xTouch[0]-whiteRightHandJointX)+(yellowFaceX+whiteSkeletonXincr);
       yell_y = yTouch[0]-15;
       yellow_x[it] = yell_x;
@@ -315,14 +335,14 @@ void ifTouchEventIs2()
         it++;
       }
     }
-    
+
     if ((leftHandJoint1<25)) // right joint id touchId[1]
     {
       stroke(255, 0, 0);
       noFill();
       rect(whiteSkeletonX, whiteSkeletonY, 167, 167, 15);//white left skeleton highlighted in red to show the correct placement
       touchEvent = true;
-      line(whiteLeftHandJointX,whiteLeftHandJointY, xTouch[0], yTouch[0]); //  the ink cretaes 2 points at a predefined distance on the tangible and hence this distance will always remain const.
+      line(whiteLeftHandJointX, whiteLeftHandJointY, xTouch[0], yTouch[0]); //  the ink cretaes 2 points at a predefined distance on the tangible and hence this distance will always remain const.
       yell_x = (yellowFaceX-whiteSkeletonXincr) - (whiteLeftHandJointX - xTouch[0]);
       yell_y = yTouch[0]-15;
       yellow_x[it] = yell_x;
@@ -352,9 +372,11 @@ void ifTouchEventIs2()
         it++;
       }
     }
-    
   }
 }
+
+
+
 
 
 //-----------------------------------------------------------------------------------------
@@ -454,4 +476,149 @@ public boolean surfaceTouchEvent(MotionEvent event) {
 //    textSize(102);
 //    text("Donkey", xTouch[3], yTouch[3]);
 //  }
+
+
+
+void ifTouchEventIs4()
+{
+  int i, j;
+  //check for right joint
+  for (i=0;i<4;i++)
+  {
+    sqrtR[i] = sqrt(pow(xTouch[i]-(whiteRightHandJointX), 2) + pow(yTouch[i]-(whiteRightHandJointY), 2));
+    if (sqrtR[i] < 25)// check for right joint --- touchid[i] is the right joint
+    { 
+      redHighlight();
+      jRx = i;
+      for (j=0;j<4;j++)
+      {
+        if (j != jRx)
+        {
+          if (xTouch[j] > whiteSkeletonX)
+            eRx = j;//RECORD j and i
+        }
+      }
+    }
+  }
+
+
+  for (i=0;i<4;i++)
+  {
+    if ((i != jRx) && (i != eRx))
+    {
+      sqrtL[i] = sqrt(pow(xTouch[i]-(whiteLeftHandJointX), 2) + pow(yTouch[i]-(whiteLeftHandJointY), 2));
+      if (sqrtL[i] < 25)// check for right joint --- touchid[i] is the right joint
+      { 
+        redHighlight();
+        jLx = i;
+
+        for (j=0;j<4;j++)
+        {
+          if ((j != jRx) && (j != eRx) && (j != jLx))
+          {
+            if (xTouch[j] < whiteSkeletonX)
+              eLx = j;//RECORD j and i
+          }
+        }
+      }
+    }
+  }
+
+  strokeWeight(5);
+  stroke(255, 255, 255);
+  touchEvent = true;
+  //line(xTouch[jRx], yTouch[jRx], xTouch[eRx], yTouch[eRx]); //  the ink cretaes 2 points at a predefined distance on the tangible and hence this distance will always remain const.
+  line (whiteRightHandJointX, whiteRightHandJointY, xTouch[eRx], yTouch[eRx]);
+  //    yell_x = (xTouch[0]-whiteRightHandJointX)+(yellowFaceX+whiteSkeletonXincr);
+  //    yell_y = yTouch[0]-15;
+  //    yellow_x[it] = yell_x;
+  //    yellow_y[it] = yell_y;
+  //    yellowJointX = yellowFaceX-whiteSkeletonXincr+yellowFaceSize;
+  //    jYellow_x[it] = yellowJointX;
+  //    if (record == true)
+  //    {
+  //      it++;
+  //    }
+
+  strokeWeight(5);
+  stroke(255, 255, 255);
+  touchEvent = true;
+  //line(xTouch[jLx], yTouch[jLx], xTouch[eLx], yTouch[eLx]);
+  line (whiteLeftHandJointX, whiteLeftHandJointY, xTouch[eLx], yTouch[eLx]);
+}
+
+void redHighlight()
+{
+  stroke(255, 0, 0);
+  noFill();
+  rect(whiteSkeletonX, whiteSkeletonY, 167, 167, 15);//white left skeleton highlighted in red to show the correct placement
+}
+
+//
+//void ifTouchEventIs4()
+//{
+//  int i, j;
+//  //check for right joint
+//  for (i=0;i<4;i++)
+//  {
+//    sqrtR[i] = sqrt(pow(xTouch[i]-(whiteRightHandJointX), 2) + pow(yTouch[i]-(whiteRightHandJointY), 2));
+//    if (sqrtR[i] < 25)// check for right joint --- touchid[i] is the right joint
+//    { 
+//      redHighlight();
+//      jRx = i;
+//      for (j=0;j<4;j++)
+//      {
+//        isLengthEqualR[j] = sqrt(pow(xTouch[i]-xTouch[j], 2) + pow(yTouch[i]-yTouch[j], 2));
+//        if ((isLengthEqualR[j] < handLength+25) && (isLengthEqualR[j] > handLength-25))
+//          eRx = j;//RECORD j and i
+//      }
+//    }
+//  }
+//
+//  
+//  for (i=0;i<4;i++)
+//  {
+//    if ((i != jRx) && (i != jRx))
+//    {
+//      sqrtL[i] = sqrt(pow(xTouch[i]-(whiteLeftHandJointX), 2) + pow(yTouch[i]-(whiteLeftHandJointY), 2));
+//      if (sqrtL[i] < 25)// check for right joint --- touchid[i] is the right joint
+//      { 
+//        redHighlight();
+//        jLx = i;
+//
+//        for (j=0;j<4;j++)
+//        {
+//          if ((j != jRx) && (j != jRx) && (j != jLx))
+//          {
+//            isLengthEqualL[j] = sqrt(pow(xTouch[i]-xTouch[j], 2) + pow(yTouch[i]-yTouch[j], 2));
+//            if ((isLengthEqualL[j] < handLength+25) && (isLengthEqualL[j] > handLength-25))
+//              eLx = j;//RECORD j and i
+//          }
+//        }
+//      }
+//    }
+//  }
+//
+//  strokeWeight(5);
+//  stroke(255, 255, 255);
+//  touchEvent = true;
+//  //line(xTouch[jRx], yTouch[jRx], xTouch[eRx], yTouch[eRx]); //  the ink cretaes 2 points at a predefined distance on the tangible and hence this distance will always remain const.
+//  line (whiteRightHandJointX, whiteRightHandJointY, xTouch[eRx], yTouch[eRx]);
+//  //    yell_x = (xTouch[0]-whiteRightHandJointX)+(yellowFaceX+whiteSkeletonXincr);
+//  //    yell_y = yTouch[0]-15;
+//  //    yellow_x[it] = yell_x;
+//  //    yellow_y[it] = yell_y;
+//  //    yellowJointX = yellowFaceX-whiteSkeletonXincr+yellowFaceSize;
+//  //    jYellow_x[it] = yellowJointX;
+//  //    if (record == true)
+//  //    {
+//  //      it++;
+//  //    }
+//  
+//  strokeWeight(5);
+//  stroke(255, 255, 255);
+//  touchEvent = true;
+//  //line(xTouch[jLx], yTouch[jLx], xTouch[eLx], yTouch[eLx]);
+//  line (whiteLeftHandJointX, whiteLeftHandJointY, xTouch[eLx], yTouch[eLx]);
+//}
 
