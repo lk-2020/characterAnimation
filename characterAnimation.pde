@@ -146,26 +146,37 @@ void draw() {
       //line(yellowJointX, whiteLeftHandJointY-15, yell_x, yell_y);// yellow left hand
     }
 
-    noStroke();
-    fill(0, 255, 180);
-    rect(900, 100, 100, 50, 15);//PLAY BUTTON
+
 
     textSize(20);
     fill(255);
     text("RECORD", 875-122, 105);
-
     if ((xTouch[0]<950-120)&&(xTouch[0]>850-120)&&(yTouch[0]>75)&&(yTouch[0]<125))
     {
       record = true;
     }
 
+    noStroke();
+    fill(0, 255, 180);
+    rect(900, 100, 100, 50, 15);//STOP BUTTON
     textSize(20);
     fill(255);
-    text("PLAY", 875, 105);
+    text("STOP", 900, 105);
+    if ((xTouch[0]<950)&&(xTouch[0]>850)&&(yTouch[0]>75)&&(yTouch[0]<125))
+    {
+      record = false;
+    }
+
+    noStroke();
+    fill(0, 255, 180);
+    rect(900+130, 100, 100, 50, 15);//PLAY BUTTON
+    textSize(20);
+    fill(255);
+    text("PLAY", 875+122, 105);
     // if play clicked
     playX = xTouch[0];
     playY = yTouch[0];
-    if ((playX<950)&&(playX>850)&&(playY>75)&&(playY<125))
+    if ((playX<950+120)&&(playX>850+120)&&(playY>75)&&(playY<125))
     {
       playX = 0.0;
       playY = 0.0;
@@ -210,7 +221,7 @@ void draw() {
         drawYellowChar();
 
         strokeWeight(25);
-        stroke(255, 0, 0);
+        stroke(255, 255, 0);
         line(jointYellow_x, whiteRightHandJointY-15, y_x, y_y);// yellow hand -- right in case of 4 touch and either in case of 2 touch
 
         if ((yellow_xL[iter] != 0.0)&&(yellow_yL[iter] != 0.0))
@@ -222,10 +233,9 @@ void draw() {
           jointYellow_xL = (int)jYellow_xL[iter];
 
           strokeWeight(25);
-          stroke(255, 0, 0);
+          stroke(255, 255, 0);
           line(jointYellow_xL, whiteRightHandJointY-15, y_xL, y_yL);// yellow hand -- left
         }
-        
       }
       if (iter == it)
       {
@@ -564,7 +574,6 @@ void ifTouchEventIs4()
       }
     }
   }
-
 }
 
 void redHighlight()
